@@ -2,6 +2,7 @@
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
+  background: null,
   cursorPosition: cc.p(0,0),
   control: {
     left: false,
@@ -17,6 +18,10 @@ var GameLayer = cc.Layer.extend({
 
     // Add your codes below...
     cc.log("Game initializing...");
+
+    // Add background
+    this.background = new Background();
+    this.addChild(this.background, 0);
     // Add player with it's default properties set up.
     this.player = new Player(res.playerShip);
     this.player.setRoamArea();
@@ -35,8 +40,8 @@ var GameLayer = cc.Layer.extend({
     return true;
   },
   /* 
-    Update method rely on it declared schedule. 
-      deltaTime - time between the last time span.
+    Update method rely on it's declared schedule. 
+      deltaTime - time between the last method execution.
   */
   update : function(dt) {
     var playerPosition = this.player.getPosition(),
@@ -48,7 +53,6 @@ var GameLayer = cc.Layer.extend({
     if (this.control.right) this.player.x = playerPosition.x + velocity;
 
     // Validate and update player behavior
-
     this.player.update(dt);
   },
   /*
