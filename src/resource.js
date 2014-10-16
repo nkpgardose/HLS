@@ -8,7 +8,7 @@ var res = {
     HelloWorld_png : folder + "HelloWorld.png",
     CloseNormal_png : folder + "CloseNormal.png",
     CloseSelected_png : folder + "CloseSelected.png",
-    playerShip : folder + "player-ship.png"
+    playerShip : folder + "Player/player-ship.png"
 };
 
 var g_resources = [];

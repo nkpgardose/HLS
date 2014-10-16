@@ -12,6 +12,7 @@
 
     "jsList" : [
         "src/resource.js",
+        "src/player.js",
         "src/app.js"
     ]
 }
