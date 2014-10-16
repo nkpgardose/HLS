@@ -54,6 +54,8 @@ var GameLayer = cc.Layer.extend({
 
     // Validate and update player behavior
     this.player.update(dt);
+    // Validate and update background
+    this.background.update(dt);
   },
   /*
     Game control setup the keyboard and other inputs like touch
