@@ -1,6 +1,8 @@
+
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
+  pressKey: 0,
   // Cocos constructor.
   ctor : function () {
     // super init first.
@@ -30,18 +32,41 @@ var GameLayer = cc.Layer.extend({
       deltaTime - time between the last time span.
   */
   update : function(dt) {
-    // cc.log("Update has been called: " + dt);
+    var playerPosition = this.player.getPosition();
+    var velocity = this.player.velocity;
+
+    // Updating controls
+    switch(this.pressKey) {
+      case 87:
+        this.player.y = playerPosition.y + velocity;
+        break;
+      case 83:
+        this.player.y = playerPosition.y - velocity;
+        break;
+      case 65:
+        this.player.x = playerPosition.x - velocity;
+        break;
+      case 68:
+        this.player.x = playerPosition.x + velocity;
+      default:
+        break;
+    }
+
   },
   /*
     Game control setup the keyboard and other inputs like touch
     and mouse.
   */
   gameControlSetup: function() {
+    var game = this;
     if(cc.sys.capabilities.hasOwnProperty('keyboard')) {
       cc.eventManager.addListener({
         event: cc.EventListener.KEYBOARD,
         onKeyPressed: function(key, event) {
-          cc.log("Key pressed: " + key.toString());
+          // Check press keys
+          if (key == 87 || key == 83 || key == 65 || key == 68 ) {
+            game.pressKey = key;
+          };
         }
       }, this);
     }

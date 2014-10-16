@@ -1,6 +1,7 @@
 var Player = cc.Sprite.extend({
 	// Add your properties and methods below.
 	life: 3,
+	velocity: 3,
 	isActive: true,
 	isShield: true,
 	bulletSpawnTime: 200,
