@@ -2,7 +2,12 @@
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
-  pressKey: 0,
+  control: {
+    left: false,
+    right: false,
+    up: false,
+    down: false,
+  },
   // Cocos constructor.
   ctor : function () {
     // super init first.
@@ -13,6 +18,7 @@ var GameLayer = cc.Layer.extend({
     cc.log("Game initializing...");
     // Add player with it's default properties set up.
     this.player = new Player(res.playerShip);
+    this.player.setRoamArea();
     this.player.attr({
       x: size.width * 0.5,
       y: size.height * 0.5
@@ -32,41 +38,37 @@ var GameLayer = cc.Layer.extend({
       deltaTime - time between the last time span.
   */
   update : function(dt) {
-    var playerPosition = this.player.getPosition();
-    var velocity = this.player.velocity;
-
+    var playerPosition = this.player.getPosition(),
+        velocity = this.player.velocity;
     // Updating controls
-    switch(this.pressKey) {
-      case 87:
-        this.player.y = playerPosition.y + velocity;
-        break;
-      case 83:
-        this.player.y = playerPosition.y - velocity;
-        break;
-      case 65:
-        this.player.x = playerPosition.x - velocity;
-        break;
-      case 68:
-        this.player.x = playerPosition.x + velocity;
-      default:
-        break;
-    }
+    if (this.control.up) this.player.y = playerPosition.y + velocity;
+    if (this.control.down) this.player.y = playerPosition.y - velocity;
+    if (this.control.left) this.player.x = playerPosition.x - velocity;
+    if (this.control.right) this.player.x = playerPosition.x + velocity;
 
+    // Validate and update player behavior
+    this.player.update(dt);
   },
   /*
     Game control setup the keyboard and other inputs like touch
     and mouse.
   */
   gameControlSetup: function() {
-    var game = this;
+    var control = this.control;
     if(cc.sys.capabilities.hasOwnProperty('keyboard')) {
       cc.eventManager.addListener({
         event: cc.EventListener.KEYBOARD,
-        onKeyPressed: function(key, event) {
-          // Check press keys
-          if (key == 87 || key == 83 || key == 65 || key == 68 ) {
-            game.pressKey = key;
-          };
+        onKeyPressed: function(key, event) { 
+          if(key == 87) control.up = true;
+          if(key == 83) control.down = true;
+          if(key == 65) control.left = true;
+          if(key == 68) control.right = true;
+        },
+        onKeyReleased: function(key, event) {
+          if(key == 87) control.up = false;
+          if(key == 83) control.down = false;
+          if(key == 65) control.left = false;
+          if(key == 68) control.right = false;
         }
       }, this);
     }
