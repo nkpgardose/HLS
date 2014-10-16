@@ -2,6 +2,7 @@
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
+  cursorPosition: cc.p(0,0),
   control: {
     left: false,
     right: false,
@@ -47,6 +48,7 @@ var GameLayer = cc.Layer.extend({
     if (this.control.right) this.player.x = playerPosition.x + velocity;
 
     // Validate and update player behavior
+
     this.player.update(dt);
   },
   /*
@@ -54,21 +56,36 @@ var GameLayer = cc.Layer.extend({
     and mouse.
   */
   gameControlSetup: function() {
-    var control = this.control;
+    var control = this.control,
+        player = this.player;
+
     if(cc.sys.capabilities.hasOwnProperty('keyboard')) {
       cc.eventManager.addListener({
         event: cc.EventListener.KEYBOARD,
         onKeyPressed: function(key, event) { 
-          if(key == 87) control.up = true;
-          if(key == 83) control.down = true;
-          if(key == 65) control.left = true;
-          if(key == 68) control.right = true;
+          if(key === 87) control.up = true;
+          if(key === 83) control.down = true;
+          if(key === 65) control.left = true;
+          if(key === 68) control.right = true;
         },
         onKeyReleased: function(key, event) {
-          if(key == 87) control.up = false;
-          if(key == 83) control.down = false;
-          if(key == 65) control.left = false;
-          if(key == 68) control.right = false;
+          if(key === 87) control.up = false;
+          if(key === 83) control.down = false;
+          if(key === 65) control.left = false;
+          if(key === 68) control.right = false;
+        }
+      }, this);
+    }
+
+    if(cc.sys.capabilities.hasOwnProperty('mouse')) {
+      cc.eventManager.addListener({
+        event: cc.EventListener.MOUSE,
+        onMouseMove: function(event){
+            // var str = "MousePosition X: " + event.getLocationX() + "  Y:" + event.getLocationY();
+            cursorPosition = event.getLocation();
+            if(cursorPosition !== null) {
+              player.updateRotation(cursorPosition);
+            }
         }
       }, this);
     }

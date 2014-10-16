@@ -35,6 +35,14 @@ var Player = cc.Sprite.extend({
 		return bullet;
 	},
 
+	updateRotation : function(cursorPosition) {
+		if (!this.isActive) return;
+		var angle = Math.atan2(cursorPosition.x - this.getPositionX(),
+													 cursorPosition.y - this.getPositionY());
+		angle = angle * (180 / Math.PI);
+		this.setRotation(angle);
+	},
+
 	update: function(dt) {
 		if (!this.isActive) return;
 		// Restrict roam capability of player.
