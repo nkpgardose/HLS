@@ -15,6 +15,7 @@ var Background = cc.LayerColor.extend({
 		this.nextBGNode = this.placeBackground();
 		cc.log(this.bgNode.getContentSize().height);
 		this.nextBGNode.y = this.bgNode.getContentSize().height;
+		return true;
 	},
 
 	/*

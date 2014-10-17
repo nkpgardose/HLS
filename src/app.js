@@ -2,8 +2,10 @@
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
+  mastermind: null,
   background: null,
   bullets: [],
+  enemies: [],
   cursorPosition: cc.p(0,0),
   spawnBulletCounter: 0,
   control: {
@@ -35,6 +37,10 @@ var GameLayer = cc.Layer.extend({
     // Activate shield of player
     this.player.activateShield(3);
 
+    // Mastermind for enemies command.
+    this.mastermind = new Mastermind();
+    this.addChild(this.mastermind);
+
     // Setting up keyboard and touch capability
     this.gameControlSetup();
     // Add schedule on this layer, update method with delta time param.
@@ -51,6 +57,7 @@ var GameLayer = cc.Layer.extend({
     var playerPosition = this.player.getPosition(),
         velocity = this.player.velocity,
         bullets = this.bullets;
+    this.enemies = this.mastermind.update();
     // Updating controls
     if (this.control.up) this.player.y = playerPosition.y + velocity;
     if (this.control.down) this.player.y = playerPosition.y - velocity;

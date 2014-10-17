@@ -35,27 +35,30 @@ var Player = cc.Sprite.extend({
 	shoot: function(dt) {
 		if (!this.isActive) return null;
 		var bullets = [],
-				bullet = new Projectile("res/Lasers/laser"+ this.projectileLevel +".png");
+				projectileLevel = this.projectileLevel,
+				bullet = new Projectile("res/Lasers/laser"+ projectileLevel +".png");
 
 		this.getParent().addChild(bullet, 0);
 		bullet.launch(this.getRotation(), this.getPosition());
 		bullets.push(bullet);
 
 		if (this.projectileLevel >= 2) {
-			var x, y, r = 50, radAngle = this.getRotation() * ( Math.PI / 180);
-			bullet = new Projectile("res/Lasers/laserSide"+ this.projectileLevel +".png");
+			var x, y, r = 50, 
+					radAngle = this.getRotation() * ( Math.PI / 180);
+
+			x = r * Math.cos(radAngle);
+			y =	r * Math.sin(-radAngle);
+
+			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
 			this.getParent().addChild(bullet, 0);
 
-			x = this.x  + r * Math.cos(radAngle);
-			y = this.y  + r * Math.sin(-radAngle);
-			bullet.launch(this.getRotation(), cc.p(x, y));
+			bullet.launch(this.getRotation(), cc.p(this.x + x, this.y + y));
 			bullets.push(bullet);
 
-			bullet = new Projectile("res/Lasers/laserSide"+ this.projectileLevel +".png");
+			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
 			this.getParent().addChild(bullet, 0);
-			x = this.x  - r * Math.cos(radAngle);
-			y = this.y  - r * Math.sin(-radAngle);
-			bullet.launch(this.getRotation(), cc.p(x, y));
+
+			bullet.launch(this.getRotation(), cc.p(this.x - x, this.y - y));
 			bullets.push(bullet);
 		};
 
