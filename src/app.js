@@ -61,21 +61,21 @@ var GameLayer = cc.Layer.extend({
     this.player.update(dt);
     this.spawnBulletCounter += dt;
     if (this.spawnBulletCounter > this.player.bulletSpawnTime) {
-      bullets.push(this.player.shoot(dt));
+      Array.prototype.push.apply(bullets, this.player.shoot(dt));
       this.spawnBulletCounter = 0;
     }
     // Validate and update background
     this.background.update(dt);
 
     // Check status of bullet
-    var tempBullet, i = bullets.length - 1;
+    var tempBullet, 
+        i = bullets.length - 1;
     while(i >= 0) {
       if (!bullets[i].isActive) {
         tempBullet = bullets[i];
         bullets.splice(i, 1);
         tempBullet.destroy();
       }
-
       i--;
     }
   },

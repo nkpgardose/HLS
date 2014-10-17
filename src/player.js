@@ -1,11 +1,12 @@
 var Player = cc.Sprite.extend({
 	// Add your properties and methods below.
-	shield: null,
+	shield: null,	
 	life: 3,
 	velocity: 5,
+	projectileLevel: 2,
+	bulletSpawnTime: 0.10,
 	isActive: true,
 	isShield: false,
-	bulletSpawnTime: 0.10,
 	roamArea: null,
 	origSize: null,
 	// Cocos constructor
@@ -33,10 +34,32 @@ var Player = cc.Sprite.extend({
 
 	shoot: function(dt) {
 		if (!this.isActive) return null;
-		var bullet = new Projectile(res.middleBullet);
+		var bullets = [],
+				bullet = new Projectile("res/Lasers/laser"+ this.projectileLevel +".png");
+
 		this.getParent().addChild(bullet, 0);
 		bullet.launch(this.getRotation(), this.getPosition());
-		return bullet;
+		bullets.push(bullet);
+
+		if (this.projectileLevel >= 2) {
+			var x, y, r = 50, radAngle = this.getRotation() * ( Math.PI / 180);
+			bullet = new Projectile("res/Lasers/laserSide"+ this.projectileLevel +".png");
+			this.getParent().addChild(bullet, 0);
+
+			x = this.x  + r * Math.cos(radAngle);
+			y = this.y  + r * Math.sin(-radAngle);
+			bullet.launch(this.getRotation(), cc.p(x, y));
+			bullets.push(bullet);
+
+			bullet = new Projectile("res/Lasers/laserSide"+ this.projectileLevel +".png");
+			this.getParent().addChild(bullet, 0);
+			x = this.x  - r * Math.cos(radAngle);
+			y = this.y  - r * Math.sin(-radAngle);
+			bullet.launch(this.getRotation(), cc.p(x, y));
+			bullets.push(bullet);
+		};
+
+		return bullets;
 	},
 
 	activateShield : function(duration) {
@@ -97,7 +120,6 @@ var Player = cc.Sprite.extend({
 			this.y = this.roamArea.height - (origSize.height * scaleY) * 0.5;
 
 		if (this.shield !== null) {
-			cc.log('kik' + this.isShield);
 			this.shield.setPosition(this.getPosition());
 			this.shield.setRotation(this.getRotation());
 		}

@@ -10,7 +10,6 @@ var res = {
     CloseSelected_png : folder + "CloseSelected.png",
     playerShip : folder + "Player/player-ship.png",
     background : folder + "Backgrounds/black.png",
-    middleBullet: folder + "Lasers/laserRed04.png",
     shield: folder + "Effects/shield3.png"
 };
 
