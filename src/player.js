@@ -4,7 +4,7 @@ var Player = cc.Sprite.extend({
 	velocity: 5,
 	isActive: true,
 	isShield: true,
-	bulletSpawnTime: 200,
+	bulletSpawnTime: 0.10,
 	roamArea: null,
 	origSize: null,
 	// Cocos constructor
@@ -31,7 +31,9 @@ var Player = cc.Sprite.extend({
 
 	shoot: function(dt) {
 		if (!this.isActive) return null;
-		var bullet;
+		var bullet = new Projectile(res.middleBullet);
+		this.getParent().addChild(bullet, 0);
+		bullet.launch(this.getRotation(), this.getPosition());
 		return bullet;
 	},
 

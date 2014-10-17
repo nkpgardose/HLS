@@ -3,7 +3,9 @@ var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   player: null,
   background: null,
+  bullets: [],
   cursorPosition: cc.p(0,0),
+  spawnBulletCounter: 0,
   control: {
     left: false,
     right: false,
@@ -29,7 +31,7 @@ var GameLayer = cc.Layer.extend({
       x: size.width * 0.5,
       y: size.height * 0.5
     });
-    this.addChild(this.player, 0);
+    this.addChild(this.player, 1);
 
     // Setting up keyboard and touch capability
     this.gameControlSetup();
@@ -45,7 +47,8 @@ var GameLayer = cc.Layer.extend({
   */
   update : function(dt) {
     var playerPosition = this.player.getPosition(),
-        velocity = this.player.velocity;
+        velocity = this.player.velocity,
+        bullets = this.bullets;
     // Updating controls
     if (this.control.up) this.player.y = playerPosition.y + velocity;
     if (this.control.down) this.player.y = playerPosition.y - velocity;
@@ -54,8 +57,25 @@ var GameLayer = cc.Layer.extend({
 
     // Validate and update player behavior
     this.player.update(dt);
+    this.spawnBulletCounter += dt;
+    if (this.spawnBulletCounter > this.player.bulletSpawnTime) {
+      bullets.push(this.player.shoot(dt));
+      this.spawnBulletCounter = 0;
+    }
     // Validate and update background
     this.background.update(dt);
+
+    // Check status of bullet
+    var tempBullet, i = bullets.length - 1;
+    while(i >= 0) {
+      if (!bullets[i].isActive) {
+        tempBullet = bullets[i];
+        bullets.splice(i, 1);
+        tempBullet.destroy();
+      }
+      
+      i--;
+    }
   },
   /*
     Game control setup the keyboard and other inputs like touch
