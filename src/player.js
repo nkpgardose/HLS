@@ -1,9 +1,10 @@
 var Player = cc.Sprite.extend({
 	// Add your properties and methods below.
+	shield: null,
 	life: 3,
 	velocity: 5,
 	isActive: true,
-	isShield: true,
+	isShield: false,
 	bulletSpawnTime: 0.10,
 	roamArea: null,
 	origSize: null,
@@ -13,6 +14,7 @@ var Player = cc.Sprite.extend({
 		this._super(filename);
 		// Add your codes below...
 		this.origSize = this.getContentSize();
+
 		// Add texture to the class
 		return true;
 	},
@@ -35,6 +37,35 @@ var Player = cc.Sprite.extend({
 		this.getParent().addChild(bullet, 0);
 		bullet.launch(this.getRotation(), this.getPosition());
 		return bullet;
+	},
+
+	activateShield : function(duration) {
+		// Create sprite following current rotation and position player
+		var shield = new cc.Sprite(res.shield);
+		shield.setPosition(this.getPosition());
+		shield.setRotation(this.getRotation());
+		// shield.setAnchorPoint(cc.p(0.5,0));
+		this.getParent().addChild(shield);
+		this.shield = shield;
+		this.isShield = true;
+
+		var action = cc.RepeatForever.create(cc.Sequence.create(
+							cc.ScaleTo.create(0.1, 1.15), 
+							cc.ScaleTo.create(0.3, 1) ));
+		this.shield.runAction(action);
+		var action2 = cc.Sequence.create(cc.DelayTime.create(duration),
+								cc.FadeIn.create(0.3), cc.FadeOut.create(0.3),
+								cc.FadeIn.create(0.3), cc.FadeOut.create(0.3),
+								cc.FadeIn.create(0.5), cc.FadeOut.create(0.5),
+								cc.CallFunc.create(this.deactivateShield, this));
+		this.shield.runAction(action2);
+	},
+
+	deactivateShield : function(node) {
+		node.stopAllActions();
+		node.removeFromParent();
+		this.shield = null;
+		this.isShield = false;
 	},
 
 	updateRotation : function(cursorPosition) {
@@ -64,6 +95,12 @@ var Player = cc.Sprite.extend({
 
 		if (currentPosition.y + (origSize.height * scaleY) * 0.5 > this.roamArea.height )
 			this.y = this.roamArea.height - (origSize.height * scaleY) * 0.5;
+
+		if (this.shield !== null) {
+			cc.log('kik' + this.isShield);
+			this.shield.setPosition(this.getPosition());
+			this.shield.setRotation(this.getRotation());
+		}
 	},
 
 	destroy: function() {

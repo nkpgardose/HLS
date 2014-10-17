@@ -32,6 +32,8 @@ var GameLayer = cc.Layer.extend({
       y: size.height * 0.5
     });
     this.addChild(this.player, 1);
+    // Activate shield of player
+    this.player.activateShield(3);
 
     // Setting up keyboard and touch capability
     this.gameControlSetup();
@@ -73,7 +75,7 @@ var GameLayer = cc.Layer.extend({
         bullets.splice(i, 1);
         tempBullet.destroy();
       }
-      
+
       i--;
     }
   },

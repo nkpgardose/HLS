@@ -1,6 +1,7 @@
 var Projectile = cc.Sprite.extend({
 	// Add your properties and methods below.
 	damage: null,
+	// For projectile angle purposes.
 	radAngle: null,
 	radX: null,
 	radY: null,
