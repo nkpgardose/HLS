@@ -10,7 +10,9 @@ var res = {
     CloseSelected_png : folder + "CloseSelected.png",
     playerShip : folder + "Player/player-ship.png",
     background : folder + "Backgrounds/black.png",
-    shield: folder + "Effects/shield3.png"
+    shield: folder + "Effects/shield3.png",
+    hitList: folder + "Lasers/hitList.plist",
+    hitTexture: folder + "Lasers/hitList.png"
 };
 
 var g_resources = [];

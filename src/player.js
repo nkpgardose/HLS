@@ -3,7 +3,7 @@ var Player = cc.Sprite.extend({
 	shield: null,	
 	life: 3,
 	velocity: 5,
-	projectileLevel: 2,
+	projectileLevel: 1,
 	bulletSpawnTime: 0.10,
 	isActive: true,
 	isShield: false,
@@ -35,14 +35,14 @@ var Player = cc.Sprite.extend({
 	shoot: function(dt) {
 		if (!this.isActive) return null;
 		var bullets = [],
-				projectileLevel = this.projectileLevel,
-				bullet = new Projectile("res/Lasers/laser"+ projectileLevel +".png");
-
+				projectileLevel = this.projectileLevel;
+		var bullet = new Projectile("res/Lasers/laser"+ projectileLevel +".png");
+		bullet.damage = projectileLevel == 1 ? 1 : projectileLevel * 0.75;
 		this.getParent().addChild(bullet, 0);
 		bullet.launch(this.getRotation(), this.getPosition());
 		bullets.push(bullet);
 
-		if (this.projectileLevel >= 2) {
+		if (projectileLevel >= 2) {
 			var x, y, r = 50, 
 					radAngle = this.getRotation() * ( Math.PI / 180);
 
@@ -50,12 +50,14 @@ var Player = cc.Sprite.extend({
 			y =	r * Math.sin(-radAngle);
 
 			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
+			bullet.damage = projectileLevel * 0.5;
 			this.getParent().addChild(bullet, 0);
 
 			bullet.launch(this.getRotation(), cc.p(this.x + x, this.y + y));
 			bullets.push(bullet);
 
 			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
+			bullet.damage = projectileLevel * 0.5;
 			this.getParent().addChild(bullet, 0);
 
 			bullet.launch(this.getRotation(), cc.p(this.x - x, this.y - y));
@@ -129,8 +131,7 @@ var Player = cc.Sprite.extend({
 	},
 
 	destroy: function() {
-		this.stopAllActions();
-		this.unschedule();
+		this.cleanup();
 		this.removeFromParent();
 	},
 

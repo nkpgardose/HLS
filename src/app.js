@@ -56,14 +56,18 @@ var GameLayer = cc.Layer.extend({
   update : function(dt) {
     var playerPosition = this.player.getPosition(),
         velocity = this.player.velocity,
-        bullets = this.bullets;
-    this.enemies = this.mastermind.update();
+        bullets = this.bullets,
+        tempBullet,
+        i = bullets.length - 1;
+
     // Updating controls
     if (this.control.up) this.player.y = playerPosition.y + velocity;
     if (this.control.down) this.player.y = playerPosition.y - velocity;
     if (this.control.left) this.player.x = playerPosition.x - velocity;
     if (this.control.right) this.player.x = playerPosition.x + velocity;
 
+    // Validate and update background
+    this.background.update(dt);
     // Validate and update player behavior
     this.player.update(dt);
     this.spawnBulletCounter += dt;
@@ -71,12 +75,7 @@ var GameLayer = cc.Layer.extend({
       Array.prototype.push.apply(bullets, this.player.shoot(dt));
       this.spawnBulletCounter = 0;
     }
-    // Validate and update background
-    this.background.update(dt);
 
-    // Check status of bullet
-    var tempBullet, 
-        i = bullets.length - 1;
     while(i >= 0) {
       if (!bullets[i].isActive) {
         tempBullet = bullets[i];
@@ -85,6 +84,23 @@ var GameLayer = cc.Layer.extend({
       }
       i--;
     }
+
+    this.enemies = this.mastermind.update();
+    for (var i = this.enemies.length - 1, j, enemies = this.enemies; 
+             i >= 0; i--) {
+      // Check enemy and player collision
+
+      // Check enemy and bullet collision
+      for(j = bullets.length - 1; j >= 0; j--) {
+        if (cc.rectIntersectsRect(bullets[j].getBoundingBox(), enemies[i].getBoundingBox())) {
+          enemies[i].hurt(bullets[j].damage);
+          tempBullet = bullets[j];
+          bullets.splice(j, 1);
+          // Animate bullet on hit
+          tempBullet.explode();
+        }
+      }
+    };
   },
   /*
     Game control setup the keyboard and other inputs like touch

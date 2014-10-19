@@ -28,10 +28,20 @@ var Enemy = cc.Sprite.extend({
 	},
 
 	fall: function(duration) {		
-		this.runAction(cc.MoveTo.create(duration, this.x, -50));
+		this.runAction(cc.MoveTo.create(duration, this.x, -100));
 	},
 
 	update: function(dt) {
 		if(!this.isActive) return;
+
+		if(this.x < -90 || this.x > cc.winSize.width + 90,
+			 this.y < -90 || this.y > cc.winSize.height + 90) {
+			this.isActive = false;
+		}
+	},
+
+	destroy: function() {
+		this.cleanup();
+		this.removeFromParent();
 	}
 });

@@ -14,8 +14,8 @@
         "src/resource.js",
         "src/random.js",
         "src/background.js",
-        "src/projectile.js",
         "src/player.js",
+        "src/projectile.js",
         "src/enemy.js",
         "src/app.js",
         "src/mastermind.js"

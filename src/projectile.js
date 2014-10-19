@@ -7,9 +7,11 @@ var Projectile = cc.Sprite.extend({
 	radY: null,
 	velocity: 15,
 	isActive: true,
-	ctor: function(filename, damage) {
+	hitTexture: null,
+	ctor: function(filename) {
 		this._super(filename);
-		this.damage = damage || 1;
+		this.damage = 1;
+		this.hitTexture = cc.textureCache.addImage(res.hitTexture);
 	},
 	launch: function(angle, position) {
 		this.setRotation(angle);
@@ -22,6 +24,30 @@ var Projectile = cc.Sprite.extend({
 		this.setPosition(position);
 		this.scheduleUpdate();
 	},
+	explode: function() {
+		this->isActive = false;
+		this.setAnchorPoint(cc.p(0.5,	1));
+		// Change texture and do an explosion action.
+		cc.spriteFrameCache.addSpriteFrames(res.hitList);
+		var hitImages = cc.SpriteBatchNode.create(hitTexture);
+  	var animFrames = [];
+		var str = "";
+		for (var i = 1; i < 2; i++) {
+			str = "laserHit" + i + 1 + ".png";
+				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(str);
+				var animFrame = new cc.AnimationFrame();
+			 animFrame.initWithSpriteFrame(spriteFrame, 1, null);
+				animFrames.push(animFrame);
+		}
+		var animation = cc.Animation.create(animFrames, 0.08, 100);
+		var animate   = cc.Animate.create(animation);
+		this.runAction(animate);
+
+		this.runAction(cc.Sequence.create(cc.DelayTime.create(1),
+			cc.CallFunc.create(function(node) {
+				this.destroy();
+			}, this)));
+	},
 	update: function(dt) {
 		if(!this.isActive) return;
 		this.x += this.velocity * this.radX;
@@ -32,9 +58,8 @@ var Projectile = cc.Sprite.extend({
 			this.isActive = false;
 		}
 	},
-	destroy: function(dt) {
-		this.stopAllActions();
-		this.unschedule();
+	destroy: function() {
+		this.cleanup();
 		this.removeFromParent();
 	}
 });
