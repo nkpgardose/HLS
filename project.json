@@ -17,7 +17,7 @@
         "src/player.js",
         "src/projectile.js",
         "src/enemy.js",
-        "src/app.js",
-        "src/mastermind.js"
+        "src/mastermind.js",
+        "src/app.js"
     ]
 }

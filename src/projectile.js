@@ -25,25 +25,25 @@ var Projectile = cc.Sprite.extend({
 		this.scheduleUpdate();
 	},
 	explode: function() {
-		this->isActive = false;
+		this.isActive = false;
 		this.setAnchorPoint(cc.p(0.5,	1));
 		// Change texture and do an explosion action.
 		cc.spriteFrameCache.addSpriteFrames(res.hitList);
-		var hitImages = cc.SpriteBatchNode.create(hitTexture);
-  	var animFrames = [];
+		var hitImages = cc.SpriteBatchNode.create(this.hitTexture);
+		var animFrames = [];
 		var str = "";
-		for (var i = 1; i < 2; i++) {
-			str = "laserHit" + i + 1 + ".png";
+		for (var i = 0; i < 2; i++) {
+			str = "laserHit" + (i + 1) + ".png";
 				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(str);
 				var animFrame = new cc.AnimationFrame();
-			 animFrame.initWithSpriteFrame(spriteFrame, 1, null);
+			 	animFrame.initWithSpriteFrame(spriteFrame, 1, null);
 				animFrames.push(animFrame);
 		}
 		var animation = cc.Animation.create(animFrames, 0.08, 100);
 		var animate   = cc.Animate.create(animation);
 		this.runAction(animate);
 
-		this.runAction(cc.Sequence.create(cc.DelayTime.create(1),
+		this.runAction(cc.Sequence.create(cc.DelayTime.create(0.2),
 			cc.CallFunc.create(function(node) {
 				this.destroy();
 			}, this)));

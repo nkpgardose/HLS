@@ -33,10 +33,10 @@ var Player = cc.Sprite.extend({
 	},
 
 	shoot: function(dt) {
-		if (!this.isActive) return null;
+		if (!this.isActive) return;
 		var bullets = [],
-				projectileLevel = this.projectileLevel;
-		var bullet = new Projectile("res/Lasers/laser"+ projectileLevel +".png");
+				projectileLevel = this.projectileLevel,
+				bullet = new Projectile("res/Lasers/laser"+ projectileLevel +".png");
 		bullet.damage = projectileLevel == 1 ? 1 : projectileLevel * 0.75;
 		this.getParent().addChild(bullet, 0);
 		bullet.launch(this.getRotation(), this.getPosition());
