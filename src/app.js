@@ -26,6 +26,7 @@ var GameLayer = cc.Layer.extend({
     // Add background
     this.background = new Background();
     this.addChild(this.background, 0);
+
     // Add player with it's default properties set up.
     this.player = new Player(res.playerShip);
     this.player.setRoamArea();
@@ -33,7 +34,9 @@ var GameLayer = cc.Layer.extend({
       x: size.width * 0.5,
       y: size.height * 0.5
     });
+    this.player.setTag(100);
     this.addChild(this.player, 1);
+
     // Activate shield of player
     this.player.activateShield(3);
 
@@ -43,6 +46,7 @@ var GameLayer = cc.Layer.extend({
 
     // Setting up keyboard and touch capability
     this.gameControlSetup();
+
     // Add schedule on this layer, update method with delta time param.
     this.scheduleUpdate();
 
@@ -85,7 +89,7 @@ var GameLayer = cc.Layer.extend({
       i--;
     }
 
-    this.enemies = this.mastermind.update();
+    this.enemies = this.mastermind.update(dt);
     for (var i = this.enemies.length - 1, j, enemies = this.enemies; 
              i >= 0; i--) {
       // Check enemy and player collision

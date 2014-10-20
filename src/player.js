@@ -15,7 +15,6 @@ var Player = cc.Sprite.extend({
 		this._super(filename);
 		// Add your codes below...
 		this.origSize = this.getContentSize();
-
 		// Add texture to the class
 		return true;
 	},

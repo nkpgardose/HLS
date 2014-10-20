@@ -12,7 +12,11 @@ var res = {
     background : folder + "Backgrounds/black.png",
     shield: folder + "Effects/shield3.png",
     hitList: folder + "Lasers/hitList.plist",
-    hitTexture: folder + "Lasers/hitList.png"
+    hitTexture: folder + "Lasers/hitList.png",
+    ufoBlue: folder + "Enemies/ufoBlue.png",
+    ufoRed: folder + "Enemies/ufoRed.png",
+    ufoGreen: folder + "Enemies/ufoGreen.png",
+    ufoYellow: folder + "Enemies/ufoYellow.png",
 };
 
 var g_resources = [];
