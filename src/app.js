@@ -1,11 +1,15 @@
 
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
+  score: 0,
+  lifeSprite: [],
   player: null,
   mastermind: null,
   background: null,
   bullets: [],
   enemies: [],
+  coins:[],
+  powerup:[],
   cursorPosition: cc.p(0,0),
   spawnBulletCounter: 0,
   control: {
@@ -14,10 +18,12 @@ var GameLayer = cc.Layer.extend({
     up: false,
     down: false,
   },
+  isActive: true,
   // Cocos constructor.
   ctor : function () {
     // super init first.
     this._super();
+
     var size = cc.winSize;
 
     // Add your codes below...
@@ -50,6 +56,23 @@ var GameLayer = cc.Layer.extend({
     // Add schedule on this layer, update method with delta time param.
     this.scheduleUpdate();
 
+    this.scoreBMLabel = new cc.LabelBMFont("Score: "+ this.score, res.font);
+    this.scoreBMLabel.setPosition(10, size.height - 100);
+    this.scoreBMLabel.setAnchorPoint(0, 0);
+    // this.scoreBMLabel.setSkewX(30);
+    // this.scoreBMLabel.setSkewY(5);
+    this.addChild(this.scoreBMLabel, 100);
+
+    for (var i = 0, life; i < this.player.life; i++) {
+      life = new cc.Sprite(res.life);
+      life.setAnchorPoint(0, 1);
+      life.setPosition((i * ( life.getContentSize().width+ 15 )) + this.scoreBMLabel.x,
+                      this.scoreBMLabel.y - 15);
+      this.addChild(life);
+      this.lifeSprite.push(life, 100);
+    };
+
+
     cc.log("Game initialize complete!");
     return true;
   },
@@ -58,11 +81,22 @@ var GameLayer = cc.Layer.extend({
       deltaTime - time between the last method execution.
   */
   update : function(dt) {
+    if (!this.isActive) return;
     var playerPosition = this.player.getPosition(),
         velocity = this.player.velocity,
         bullets = this.bullets,
-        tempBullet,
+        temp,
         i = bullets.length - 1;
+
+    // Check player if life is 0, spawn game over.
+    if (!this.player.isActive) {
+      // Game over
+      this.isActive = false;
+      this.unschedule();
+      this.player.explode();
+      this.player = null;
+      return;
+    };
 
     // Updating controls
     if (this.control.up) this.player.y = playerPosition.y + velocity;
@@ -72,6 +106,7 @@ var GameLayer = cc.Layer.extend({
 
     // Validate and update background
     this.background.update(dt);
+
     // Validate and update player behavior
     this.player.update(dt);
     this.spawnBulletCounter += dt;
@@ -80,31 +115,66 @@ var GameLayer = cc.Layer.extend({
       this.spawnBulletCounter = 0;
     }
 
+    // Update bullets.
     while(i >= 0) {
       if (!bullets[i].isActive) {
-        tempBullet = bullets[i];
+        temp = bullets[i];
         bullets.splice(i, 1);
-        tempBullet.destroy();
+        temp.destroy();
       }
       i--;
     }
 
+    // Checking collisions between active objects.
     this.enemies = this.mastermind.update(dt);
     for (var i = this.enemies.length - 1, j, enemies = this.enemies; 
              i >= 0; i--) {
-      // Check enemy and player collision
+      // Check enemy and player collision.
+      if(cc.rectIntersectsRect(this.player.getBoundingBox(), enemies[i].getBoundingBox())
+        && !this.player.isShield) {
+        this.player.hurt(1);
+        var life = this.lifeSprite.pop();
+        life.cleanupo
+        life.removeFromParent();
+      }
 
-      // Check enemy and bullet collision
       for(j = bullets.length - 1; j >= 0; j--) {
+        temp = bullets[j];
+
+        // Check enemy and bullet collisions.
         if (cc.rectIntersectsRect(bullets[j].getBoundingBox(), enemies[i].getBoundingBox())) {
           enemies[i].hurt(bullets[j].damage);
-          tempBullet = bullets[j];
           bullets.splice(j, 1);
           // Animate bullet on hit
-          tempBullet.explode();
+          temp.explode();
         }
       }
-    };
+    }
+
+    for(var i = this.coins.length - 1; i >= 0; i--) {
+      // Check coins and player collision
+      temp = this.coins[i];
+      if(!temp.isActive) {
+        this.coins.splice(i, 1);
+        temp.destroy();
+        continue;
+      }
+
+      if (cc.rectIntersectsRect(temp.getBoundingBox(), this.player.getBoundingBox())) {
+        // Score update
+        // cc.log("Scoore!");
+        this.score += temp.coinValue;
+        this.scoreBMLabel.runAction(cc.MoveBy.create(0.1, cc.p(0, 5)));
+        this.scoreBMLabel.setString("Score: "+ this.score);
+        this.scoreBMLabel.runAction(cc.MoveBy.create(0.1, cc.p(0, -5)));
+        this.coins.splice(i, 1);
+        if (temp.isImproveWeapon) {
+          // Power up plus one!
+          this.player.gainPowerUp();
+        };
+        temp.caught();
+      }
+    }
   },
   /*
     Game control setup the keyboard and other inputs like touch

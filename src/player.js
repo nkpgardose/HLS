@@ -19,6 +19,11 @@ var Player = cc.Sprite.extend({
 		return true;
 	},
 
+	gainPowerUp: function() {
+		this.projectileLevel += 1;
+		this.projectileLevel = this.projectileLevel > 4 ? 4 : this.projectileLevel;
+	},
+
 	gainLife: function(numLife) {
 		this.life += numLife;
 		this.life = this.life > 9 ? 9 : this.life;
@@ -26,8 +31,17 @@ var Player = cc.Sprite.extend({
 	},
 
 	hurt: function(numLife) {
+		// Reset power to 1
+		this.projectileLevel = 1;
 		this.life -= numLife;
 		this.isActive = this.life <= 0 ? false : true;
+		// Make player fade in and out
+		this.runAction(cc.Sequence.create(
+			cc.FadeOut.create(0.1),
+			cc.FadeIn.create(0.2),
+			cc.FadeOut.create(0.3),
+			cc.FadeIn.create(0.6)));
+		this.activateShield(3);
 		return this.life;
 	},
 
@@ -49,14 +63,15 @@ var Player = cc.Sprite.extend({
 			y =	r * Math.sin(-radAngle);
 
 			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
-			bullet.damage = projectileLevel * 0.5;
+			bullet.damage = projectileLevel * 0.2;
 			this.getParent().addChild(bullet, 0);
 
 			bullet.launch(this.getRotation(), cc.p(this.x + x, this.y + y));
 			bullets.push(bullet);
 
 			bullet = new Projectile("res/Lasers/laserSide"+ projectileLevel +".png");
-			bullet.damage = projectileLevel * 0.5;
+			bullet.damage = projectileLevel * 0.15;
+			cc.log(bullet.damage);
 			this.getParent().addChild(bullet, 0);
 
 			bullet.launch(this.getRotation(), cc.p(this.x - x, this.y - y));
@@ -132,6 +147,33 @@ var Player = cc.Sprite.extend({
 	destroy: function() {
 		this.cleanup();
 		this.removeFromParent();
+	},
+
+	explode: function() {
+		this.shield.cleanup();
+		this.shield.removeFromParent();
+		this.shield = null;
+		this.stopAllActions();
+
+
+		// Explode player
+		this.explodeParticle();
+		this.runAction(cc.FadeOut.create(1), cc.CallFunc.create(this.destroy, this));
+	},
+
+	explodeParticle: function() {
+		// Set a particle explosion
+		var signal = new cc.ParticleExplosion();
+		signal.setPosition(this.getPosition());
+		this.getParent().addChild(signal, 0);
+		signal.texture = cc.textureCache.addImage(res.star);
+		signal.setEmitterMode(cc.ParticleSystem.MODE_RADIUS);
+		signal.setStartColor(cc.color(255,255,255));
+		signal.setEndColor(cc.color(255,0,0));
+		signal.setAutoRemoveOnFinish(true);
+		signal.setStartRadius(30);
+		signal.setEndRadius(1000);
+		signal.setBlendAdditive(true);
 	},
 
 	setRoamArea: function(size) {

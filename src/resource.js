@@ -17,6 +17,12 @@ var res = {
     ufoRed: folder + "Enemies/ufoRed.png",
     ufoGreen: folder + "Enemies/ufoGreen.png",
     ufoYellow: folder + "Enemies/ufoYellow.png",
+    mothership: folder + "Enemies/mothership.png",
+    star: folder + "Effects/star3.png",
+    coin: folder + "coin.png",
+    font: folder + "fonts/game-font.fnt",
+    life: folder + "playerLife2_orange.png",
+    powerup: folder + "bold_silver.png"
 };
 
 var g_resources = [];

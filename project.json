@@ -18,7 +18,10 @@
         "src/projectile.js",
         "src/enemy.js",
         "src/UFO.js",
+        "src/mothership.js",
         "src/mastermind.js",
+        "src/coin.js",
+        "src/gameOver.js",
         "src/app.js"
     ]
 }

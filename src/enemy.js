@@ -1,21 +1,23 @@
 var Enemy = cc.Sprite.extend({
 	// Add your properties and methods below.
 	health: 10, // Default
+	objValue: 10, // Default is 1, 10 is the highest and 1 is lowest
 	isActive: true,
+	isDestroy: false,
 	deltaPosition: null,
 	ctor: function(filename) {
 		this._super(filename);
-
 		return true;
 	},
 
 	setHealth: function(value) {
+		this.objValue = value;
 		this.health = value;
 	},
 
 	hurt: function(damage) {
 		this.health -= damage;
-		this.isActive = this.health < 0 ? false : true;
+		if( this.health < 0 ){ this.isActive = false; this.isDestroy = true; }
 	},
 
 	spin: function(duration) {
