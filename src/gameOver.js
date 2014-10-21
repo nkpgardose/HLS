@@ -8,11 +8,11 @@ var GameOverLayer = cc.Layer.extend({
 	  // Add background
 		this.background = new Background();
 		this.addChild(this.background, 0);
-		
+
 		// Add Menu
 	  var backToMenu = new cc.MenuItemImage(
-	      res.CloseNormal_png,
-	      res.CloseSelected_png,
+	      res.proceed,
+	      res.proceedPress,
 	      function () {
           var scene = new GameOverScene();
 			    cc.director.pushScene(scene);

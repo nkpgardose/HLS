@@ -6,8 +6,10 @@ if (!cc.sys.isNative) {
 
 var res = {
     HelloWorld_png : folder + "HelloWorld.png",
-    CloseNormal_png : folder + "CloseNormal.png",
-    CloseSelected_png : folder + "CloseSelected.png",
+    proceed : folder + "green_button09.png",
+    proceedPress : folder + "green_button10.png",
+    back : folder + "red_button06.png",
+    backPress : folder + "red_button07.png",
     playerShip : folder + "Player/player-ship.png",
     background : folder + "Backgrounds/black.png",
     shield: folder + "Effects/shield3.png",
