@@ -9,7 +9,7 @@ var Player = cc.Sprite.extend({
 	isShield: false,
 	roamArea: null,
 	origSize: null,
-	// Cocos constructor
+
 	ctor: function (filename) {
 		// Super init first.
 		this._super(filename);
@@ -161,6 +161,10 @@ var Player = cc.Sprite.extend({
 		this.runAction(cc.FadeOut.create(1), cc.CallFunc.create(this.destroy, this));
 	},
 
+	setRoamArea: function(size) {
+		this.roamArea = size || cc.winSize;
+	},
+
 	explodeParticle: function() {
 		// Set a particle explosion
 		var signal = new cc.ParticleExplosion();
@@ -176,7 +180,6 @@ var Player = cc.Sprite.extend({
 		signal.setBlendAdditive(true);
 	},
 
-	setRoamArea: function(size) {
-		this.roamArea = size || cc.winSize;
-	}
+
+// Shows question mark symbol because of MODE_RADIUS, 
 });

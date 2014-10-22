@@ -1,12 +1,16 @@
 var Enemy = cc.Sprite.extend({
 	// Add your properties and methods below.
-	health: 10, // Default
-	objValue: 10, // Default is 1, 10 is the highest and 1 is lowest
-	isActive: true,
-	isDestroy: false,
-	deltaPosition: null,
+	health: undefined, // Default
+	objValue: undefined, // Default is 1, 10 is the highest and 1 is lowest
+	isActive: undefined,
+	isDestroy: undefined,
+	deltaPosition: undefined,
 	ctor: function(filename) {
 		this._super(filename);
+		this.health = 10;
+		this.objValue = 10;
+		this.isActive = true;
+		this.isDestroy = true;
 		return true;
 	},
 
@@ -49,6 +53,6 @@ var Enemy = cc.Sprite.extend({
 
 	destroy: function() {
 		this.cleanup();
-		this.removeFromParent();
+		this.removeFromParent(true);
 	}
 });

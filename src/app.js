@@ -2,16 +2,16 @@
 var GameLayer = cc.Layer.extend({
   // Add your properties and methods of game layer here.
   score: 0,
-  lifeSprite: [],
-  player: null,
-  mastermind: null,
-  background: null,
+  lifeSprites: [],
+  player: undefined,
+  mastermind: undefined,
+  background: undefined,
   bullets: [],
   enemies: [],
   coins:[],
-  powerup:[],
-  cursorPosition: cc.p(0,0),
+  cursorPosition: undefined,
   spawnBulletCounter: 0,
+  scoreBMLabel: undefined,
   control: {
     left: false,
     right: false,
@@ -19,15 +19,19 @@ var GameLayer = cc.Layer.extend({
     down: false,
   },
   isActive: true,
-  // Cocos constructor.
+  /*
+      Overriding ctor function.
+  */
   ctor : function () {
     // super init first.
     this._super();
-
+    // TODO: Bug. Having problem with sizing screen. Force sizing.
+    // On replaceScenes.
+    cc.winSize = cc.size(1280, 720);
     var size = cc.winSize;
-
     // Add your codes below...
     cc.log("Game initializing...");
+    cc.log("Window size: " + size);
 
     // Add background
     this.background = new Background();
@@ -38,7 +42,7 @@ var GameLayer = cc.Layer.extend({
     this.player.setRoamArea();
     this.player.attr({
       x: size.width * 0.5,
-      y: size.height * 0.5
+      y: 100
     });
     this.player.setTag(100);
     this.addChild(this.player, 1);
@@ -57,28 +61,25 @@ var GameLayer = cc.Layer.extend({
     this.scheduleUpdate();
 
     this.scoreBMLabel = new cc.LabelBMFont("Score: "+ this.score, res.font);
-    this.scoreBMLabel.setPosition(10, size.height - 100);
     this.scoreBMLabel.setAnchorPoint(0, 0);
-    // this.scoreBMLabel.setSkewX(30);
-    // this.scoreBMLabel.setSkewY(5);
+    this.scoreBMLabel.setPosition(10, size.height - 100);
     this.addChild(this.scoreBMLabel, 100);
 
     for (var i = 0, life; i < this.player.life; i++) {
       life = new cc.Sprite(res.life);
       life.setAnchorPoint(0, 1);
       life.setPosition((i * ( life.getContentSize().width+ 15 )) + this.scoreBMLabel.x,
-                      this.scoreBMLabel.y - 15);
-      this.addChild(life);
-      this.lifeSprite.push(life, 100);
+                        this.scoreBMLabel.y - 15);
+      this.addChild(life, 100);
+      this.lifeSprites.push(life);
     };
-
 
     cc.log("Game initialize complete!");
     return true;
   },
   /* 
     Update method rely on it's declared schedule. 
-      deltaTime - time between the last method execution.
+    @deltaTime - time between the last method execution.
   */
   update : function(dt) {
     if (!this.isActive) return;
@@ -90,13 +91,22 @@ var GameLayer = cc.Layer.extend({
 
     // Check player if life is 0, spawn game over.
     if (!this.player.isActive) {
-      // Game over
       this.isActive = false;
       this.unschedule();
       this.player.explode();
-      this.player = null;
+      glob.score = this.score;
+      // Run a given seconds delay before transitioning to game over scene.
+      this.runAction(
+        cc.Sequence.create(
+          cc.DelayTime.create(4),
+          cc.CallFunc.create(function () {
+              this.destroy();
+              replaceToGameOver();
+          }, this)
+        )
+      )
       return;
-    };
+    }
 
     // Updating controls
     if (this.control.up) this.player.y = playerPosition.y + velocity;
@@ -133,9 +143,9 @@ var GameLayer = cc.Layer.extend({
       if(cc.rectIntersectsRect(this.player.getBoundingBox(), enemies[i].getBoundingBox())
         && !this.player.isShield) {
         this.player.hurt(1);
-        var life = this.lifeSprite.pop();
-        life.cleanupo
-        life.removeFromParent();
+        var life = this.lifeSprites.pop();
+        life.cleanup();
+        life.removeFromParent(true);
       }
 
       for(j = bullets.length - 1; j >= 0; j--) {
@@ -145,14 +155,14 @@ var GameLayer = cc.Layer.extend({
         if (cc.rectIntersectsRect(bullets[j].getBoundingBox(), enemies[i].getBoundingBox())) {
           enemies[i].hurt(bullets[j].damage);
           bullets.splice(j, 1);
-          // Animate bullet on hit
+          // Animate bullet on hit.
           temp.explode();
         }
       }
     }
 
     for(var i = this.coins.length - 1; i >= 0; i--) {
-      // Check coins and player collision
+      // Check coins and player collision.
       temp = this.coins[i];
       if(!temp.isActive) {
         this.coins.splice(i, 1);
@@ -161,8 +171,7 @@ var GameLayer = cc.Layer.extend({
       }
 
       if (cc.rectIntersectsRect(temp.getBoundingBox(), this.player.getBoundingBox())) {
-        // Score update
-        // cc.log("Scoore!");
+        // Score update.
         this.score += temp.coinValue;
         this.scoreBMLabel.runAction(cc.MoveBy.create(0.1, cc.p(0, 5)));
         this.scoreBMLabel.setString("Score: "+ this.score);
@@ -214,14 +223,43 @@ var GameLayer = cc.Layer.extend({
         }
       }, this);
     }
+  },
+  /*
+    Cleaning other layer's variable
+  */
+  destroy: function() {
+    this.cleanup();
+    this.mastermind.destroy();
+    this.mastermind = undefined;
+    this.player = undefined;
+    this.background = undefined;
+
+    // Remove objects from the main layer.
+    while(this.bullets.length) { this.bullets.pop().destroy()};
+    while(this.enemies.length) { this.enemies.pop().destroy(true)};
+    while(this.coins.length) { this.coins.pop().destroy(true)};
+    while(this.lifeSprites.length) { this.lifeSprites.pop().removeFromParent(true)};
+
+    this.removeAllChildren(true);
+    this.removeFromParent(true);
   }
 });
+
+var INIT_GAME = false;
+var replaceToGameOver = function() {
+  INIT_GAME = false;
+  cc.director.runScene(new cc.TransitionFade(1.0,  new GameOverScene()));
+  cc.log(cc.director.isSendCleanupToScene())
+};
 
 var GameScene = cc.Scene.extend({
   onEnter:function () {
     this._super();
-    var layer = new GameLayer();
-    this.addChild(layer);
+    if (!INIT_GAME) {
+      INIT_GAME = true;
+      var layer = new GameLayer();
+      this.addChild(layer);
+    }
   }
 });
 

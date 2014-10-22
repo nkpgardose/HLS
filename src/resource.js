@@ -6,8 +6,8 @@ if (!cc.sys.isNative) {
 
 var res = {
     HelloWorld_png : folder + "HelloWorld.png",
-    proceed : folder + "green_button09.png",
-    proceedPress : folder + "green_button10.png",
+    proceed : folder + "green_button02.png",
+    proceedPress : folder + "green_button03.png",
     back : folder + "red_button06.png",
     backPress : folder + "red_button07.png",
     playerShip : folder + "Player/player-ship.png",
@@ -24,7 +24,14 @@ var res = {
     coin: folder + "coin.png",
     font: folder + "fonts/game-font.fnt",
     life: folder + "playerLife2_orange.png",
-    powerup: folder + "bold_silver.png"
+    powerup: folder + "bold_silver.png",
+    goldMedal: folder + "medalGold.png",
+    silverMedal: folder + "medalSilver.png",
+    bronzeMedal: folder + "medalBronze.png"
+};
+
+var glob = {
+    score: 2000,
 };
 
 var g_resources = [];

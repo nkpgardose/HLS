@@ -3,12 +3,15 @@ var Mastermind = cc.Node.extend({
 	isActive: true,
 	enemies: [],
 	units: null,
-	// This depend on delta time values.
-	totalCounter: 1, // Starts with one on mothership conditional spawning
-	ufoSpawnTime: null,
+	// These depend on delta time values.
 	ufoCounter: 0,
-	ufoInitPosition: null,
+	totalCounter: 1, // Starts with one on mothership conditional spawning.
 	spawnChance: 2,
+	ufoSpawnTime: null,
+	ufoInitPosition: null,
+	/*
+		Overriding ctor function. 
+	*/
 	ctor: function() {
 		this._super();
 		this.ufoSpawnTime = getRandomInt(20, 30);
@@ -19,13 +22,16 @@ var Mastermind = cc.Node.extend({
 		[-60, size.height * 0.5], 
 		[size.width + 60, size.height * 0.5 - 100]];
 	},
-
+  /* 
+    Update method rely on it's declared schedule. 
+    @deltaTime - time between the last method execution.
+  */
 	update: function(dt) {
 		if (!this.isActive) return;
 		var randNum, index, temp;
 		this.totalCounter += dt;
 
-		// Check status of the enemies
+		// Check status of the enemies.
 		index = this.enemies.length - 1;
 		while(index >= 0) {
 			temp = this.enemies[index];
@@ -33,7 +39,7 @@ var Mastermind = cc.Node.extend({
 			if(!temp.isActive) {
 				this.enemies.splice(index, 1);
 				if( temp.isDestroy ) {
-					// TODO: Release coins plus with chance of power ups
+					// Release coins plus with chance of power ups.
 					var coins = [], coin, spawnCoins, powerUpChance;
 					if (temp.objValue < 3) {
 						spawnCoins = 1;
@@ -76,14 +82,14 @@ var Mastermind = cc.Node.extend({
 			index--;
 		}
 
-		// Always spawn enemy but halt when doing formations
+		// Always spawn enemy but halt when doing formations.
 		randNum = getRandomArbitrary(0, 100); 
 		if(randNum <= this.spawnChance) {
-			// Spawn meteors randNum for choosing which meteor
+			// Spawn meteors randNum for choosing which meteor.
 			randNum = getRandomInt(1, 10);
 			var meteor = new Enemy("res/Meteors/meteor"+randNum+".png");
 			meteor.setHealth(randNum);
-			// Set position
+			// Set position.
 			meteor.setPosition(getRandomArbitrary(10, cc.winSize.width - 10),
 			 cc.winSize.height + 50);
 			this.getParent().addChild(meteor);
@@ -112,7 +118,7 @@ var Mastermind = cc.Node.extend({
 	    	healthValue += 35;
 	    }
 
-	    // Create 4 spawning ufos side to side
+	    // Create 4 spawning ufos side to side.
 	    for (var i = 0; i < 4; i++) {
 	    	ufo = new UFO(ufoColor);
 	    	ufo.setHealth(healthValue);
@@ -128,10 +134,10 @@ var Mastermind = cc.Node.extend({
 		}
 		this.ufoCounter += dt;
 
-		// Mothership
+		// Mothership.
 		if (Math.floor(this.totalCounter) % 100 === 0) {
 			this.totalCounter += 1;
-			// Always spawn enemy but halt when doing formations
+			// Always spawn enemy but halt when doing formations.
 			var randNum = getRandomArbitrary(0, 100),
 					size = cc.winSize;
 
@@ -149,8 +155,22 @@ var Mastermind = cc.Node.extend({
 
 		return this.enemies;
 	},
-
+  /* 
+    Set mastermind active state given on value
+  */
 	setIsActive: function(value) {
 		this.isActive = value;
+	},
+	/*
+		Cleaning and just to make sure to prevent memory stack
+	*/
+	destroy: function() {
+		this.cleanup();
+		this.removeAllChildren();
+		this.removeFromParent();
+		// Making sure enemies are unreferenced
+		while(this.enemies.length) {
+			this.enemies.pop().destroy();
+		}
 	}
 });

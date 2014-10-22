@@ -1,5 +1,5 @@
 var Background = cc.LayerColor.extend({
-	// Add your properties and methods below.
+	// Add your properties and functions below.
 	/* By default, two layer scrolls */
 	bgNode: null,
 	nextBGNode: null,
@@ -66,5 +66,21 @@ var Background = cc.LayerColor.extend({
 		if(nextBGNode.getPositionY() < -(nextBGNode.getContentSize().height + 10)) {
 			nextBGNode.y = bgNode.getPositionY() + bgNode.getContentSize().height;	
 		}
+	},
+
+	destroy: function() {
+		this.bgNode.cleanup();
+		this.bgNode.stoppAllActions();
+		this.bgNode.removeAllChildren(true);
+		this.bgNode.removeFromParent(true);
+		this.bgNode = null;
+
+		this.nextBGNode.cleanup();
+		this.nextBGNode.stoppAllActions();
+		this.nextBGNode.removeAllChildren(true);
+		this.nextBGNode.removeFromParent(true);
+		this.nextBGNode = null;		
+
+		layerSize = null;
 	}
 });

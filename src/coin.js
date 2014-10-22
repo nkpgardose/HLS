@@ -53,6 +53,6 @@ var Coin = cc.Sprite.extend({
 
 	destroy: function() {
 		this.cleanup();
-		this.removeFromParent();
+		this.removeFromParent(true);
 	}
 });

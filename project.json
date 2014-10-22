@@ -22,6 +22,7 @@
         "src/mastermind.js",
         "src/coin.js",
         "src/gameOver.js",
+        "src/mainMenu.js",
         "src/app.js"
     ]
 }
