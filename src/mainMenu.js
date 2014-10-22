@@ -10,7 +10,7 @@ var MainMenuLayer = cc.Layer.extend({
 		this.addChild(this.background, 0);
 		this.scheduleUpdate();
 
-		this.mainMessage = new cc.LabelBMFont("humans last ship", res.font);
+		this.mainMessage = new cc.LabelBMFont("humans' last ship", res.font);
 		var sequence = cc.Sequence.create(
 					cc.TintTo.create(0.5, 255,255,0),
 					cc.TintTo.create(0.5, 236,122,0),
@@ -33,13 +33,13 @@ var MainMenuLayer = cc.Layer.extend({
 
 		this.controlMessage = new cc.LabelBMFont("controls: A.S.W.D", res.font);
 		this.controlMessage.setScale(0.5);
-		this.controlMessage.setPosition(size.width / 2 - 450, size.height / 2 - 100);
+		this.controlMessage.setPosition(size.width / 2 - 400, size.height / 2 - 100);
     this.controlMessage.setAnchorPoint(0, 0.5);
     this.addChild(this.controlMessage, 100);
 
 		this.aimMessage = new cc.LabelBMFont("to aim: mouse move", res.font);
 		this.aimMessage.setScale(0.5);
-		this.aimMessage.setPosition(size.width / 2 - 450, size.height / 2 - 150);
+		this.aimMessage.setPosition(size.width / 2 - 400, size.height / 2 - 150);
     this.aimMessage.setAnchorPoint(0, 0.5);
     this.addChild(this.aimMessage, 100);
 
@@ -80,15 +80,6 @@ var menuToGame = function() {
 	INIT_MAINMENU = false
   cc.director.runScene(new cc.TransitionFade(1.0, new GameScene()));
   cc.log(cc.director.isSendCleanupToScene());
-	// window.twttr=(
-	// 	function(d,s,id){
-	// 		var t,js,fjs=d.getElementsByTagName(s)[0];
-	// 		if(d.getElementById(id)){return}
-	// 			js=d.createElement(s);
-	// 			js.id=id;
-	// 			js.src="https://platform.twitter.com/widgets.js";
-	// 			fjs.parentNode.insertBefore(js,fjs);
-	// 			return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
 };
 
 

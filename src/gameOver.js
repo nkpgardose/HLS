@@ -37,8 +37,14 @@ var GameOverLayer = cc.Layer.extend({
     this.backToMenu = new cc.LabelBMFont("Menu", res.font);
     this.backToMenu.setPosition(size.width / 2 + 130, size.height / 2  - 200);
     this.backToMenu.setAnchorPoint(0.5, 0.5);
-		// Add Menu
     this.addChild(this.backToMenu, 101);  
+
+    var message = new cc.LabelBMFont("@nkpgardose", res.font);
+    message.setPosition(size.width / 2, size.height / 2  - 300);
+    message.setScale(0.5);
+    message.setAnchorPoint(0.5, 0.5);
+    this.addChild(message);
+		// Add Menu
 	  var retryGame = new cc.MenuItemImage(
 	      res.proceed,
 	      res.proceedPress,
