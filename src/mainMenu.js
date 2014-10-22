@@ -10,7 +10,7 @@ var MainMenuLayer = cc.Layer.extend({
 		this.addChild(this.background, 0);
 		this.scheduleUpdate();
 
-		this.mainMessage = new cc.LabelBMFont("humans' last ship", res.font);
+		this.mainMessage = new cc.LabelBMFont("humanity's last ship", res.font);
 		var sequence = cc.Sequence.create(
 					cc.TintTo.create(0.5, 255,255,0),
 					cc.TintTo.create(0.5, 236,122,0),
