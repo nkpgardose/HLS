@@ -29,7 +29,6 @@ var GameOverLayer = cc.Layer.extend({
     this.addChild(this.subMessage, 100);  
     // Medal
     this.giveMedal();  
-		// Add Menu
     this.retry = new cc.LabelBMFont("retry", res.font);
     this.retry.setPosition(size.width / 2 - 125, size.height / 2  - 200);
     this.retry.setAnchorPoint(0.5, 0.5);
@@ -38,6 +37,7 @@ var GameOverLayer = cc.Layer.extend({
     this.backToMenu = new cc.LabelBMFont("Menu", res.font);
     this.backToMenu.setPosition(size.width / 2 + 130, size.height / 2  - 200);
     this.backToMenu.setAnchorPoint(0.5, 0.5);
+		// Add Menu
     this.addChild(this.backToMenu, 101);  
 	  var retryGame = new cc.MenuItemImage(
 	      res.proceed,
@@ -50,8 +50,7 @@ var GameOverLayer = cc.Layer.extend({
 	      res.back,
 	      res.backPress,
 	      function () {
-       		// var scene = new GameOverScene();
-			    // cc.director.pushScene(scene);
+	      	replaceToMenu();
 	      }, this);
 	  backToMenu.setScale(1.25);
 		var menu = new cc.Menu(retryGame, backToMenu);
@@ -114,7 +113,7 @@ var replaceToGame = function() {
 };
 
 var replaceToMenu = function() {
-	INIT_MAINMENU = true;
+	INIT_MAINMENU = false;
   cc.director.runScene(new MainMenuScene());
   cc.log(cc.director.isSendCleanupToScene());
 }

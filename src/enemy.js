@@ -10,7 +10,7 @@ var Enemy = cc.Sprite.extend({
 		this.health = 10;
 		this.objValue = 10;
 		this.isActive = true;
-		this.isDestroy = true;
+		this.isDestroy = false;
 		return true;
 	},
 
